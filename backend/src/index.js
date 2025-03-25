@@ -9,6 +9,9 @@ const app = express();
 
 const PORT = process.env.PORT;
 
+//för att kunna fånga användarinfo
+app.use(express.json());
+
 app.use ("/api/auth", authRouter);
 
 app.listen (PORT, () => {

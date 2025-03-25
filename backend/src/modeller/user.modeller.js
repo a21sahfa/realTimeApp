@@ -1,22 +1,27 @@
 import { kMaxLength } from "buffer";
 import mongoose from "mongoose";
 import { type } from "os";
-const userinfo = new mongoose.info(
+//vilka fält en användare ska ha
+const userInfo = new mongoose.Schema(
 {
     email: {
-        type: string,
+        type: String,
         required: true,
         unique: true,  
     },
     namn: {
-        type: string,
+        type: String,
         required: true,           
     },
     password: {
-        type: string,
+        type: String,
         required: true,
         minlength: 6,
     },
 },
 { Timestamp: true }
 );
+
+const User = mongoose.model("User", userInfo);
+//exporterar den så att vi kan använda den i olika filer
+export default User;
