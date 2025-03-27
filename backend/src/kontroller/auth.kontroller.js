@@ -46,10 +46,42 @@ export const register = async (req, res) => {
     }
 };
 
-export const login = (req, res) => {
-    res.send("login router");
+export const login = async (req, res) => {
+    const{ email, password } = req.body;
+    try {
+        const user = await User.findOne({email});
+
+        if (!user)  {
+            return res.status(400).json({message:"invalid credentials"});
+        }
+
+        const isPassCorrect = await bcrypt.compare(password, user.password);
+        if(!isPassCorrect) {
+            return res.status(400).json({message:"invalid credentials"});
+        }
+
+        generateToken(user._id,res);
+
+        res.status(200).json({
+            _id:user._id,
+            namn:user.namn,
+            email:user.email,            
+        })
+        
+    } catch (error) {
+        console.log("error in login kontroller", error.message);
+        res.status(500).json({message: "internal server error"});
+
+    }
 };
 
 export const logout = (req, res) => {
-    res.send("logout router");
+try {
+    res.cookie("token", "", { maxAge: 0 });
+    res.status(200).json({message: "loggades ut"});
+
+} catch (error) {
+    console.log("error in logout kontroller", error.message);
+    res.status(500).json({message: "internal server error"});
+}
 };
