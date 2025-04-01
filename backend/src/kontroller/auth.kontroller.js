@@ -1,6 +1,7 @@
 import { generateToken } from "../lib/jwt.lib.js";
 import User from "../modeller/user.modeller.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../lib/cloudinary.js";
 
 export const register = async (req, res) => {
     //fångar data som användare skickar
@@ -85,3 +86,34 @@ try {
     res.status(500).json({message: "internal server error"});
 }
 };
+
+export const updateraBild = async(req, res) => {
+    try {
+        const {profilBild} = req.body;
+        const userId = req.user._id;
+
+        if(!profilBild){
+            return res.status(400).json({message:"behöver en profilbild"});
+
+        }
+
+        const uploadResponse = await cloudinary.uploader.upload(profilBild);
+        const updateradUser = await User.findByIDAndUpdate(userId, {profilBild:uploadResponse.secure_url}, {new:true});
+
+        res.status(500).json(updateradUser);
+
+
+    } catch (error) {
+        console.log("error in update profile:", error);
+        res.status(500).json({message: "internal server error"});
+    }
+};
+
+export const checkAuth = (req,res) => {
+    try {
+        res.status(200).json(req.user);
+    } catch (error){
+        console.log("error in checkauth kontroller", error.message);
+        res.status(500).json({message: "internal server error"});    
+    }
+}

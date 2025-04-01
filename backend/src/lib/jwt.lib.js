@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 //funktion som genererar jwt token
 export const generateToken= (userId, res) => {
-    const token = jwt.sign({userId}, process.env.JWT_hemlig, {
+    const token = jwt.sign({userId}, process.env.JWT_HEMLIG, {
         expiresIn:"7d"
     });
 

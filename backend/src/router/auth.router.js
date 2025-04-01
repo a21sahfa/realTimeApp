@@ -1,5 +1,6 @@
 import express from "express";
-import { login, logout, register } from "../kontroller/auth.kontroller.js";
+import { updateraBild, checkAuth, login, logout, register } from "../kontroller/auth.kontroller.js";
+import { skyddRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -9,6 +10,9 @@ router.post("/login", login);
 
 router.post("/logout", logout);
 
+router.put("/updaterabild", skyddRoute, updateraBild);
+
+router.get("/check", skyddRoute, checkAuth);
 
 export default router;
  
