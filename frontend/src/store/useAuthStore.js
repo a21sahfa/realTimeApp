@@ -6,7 +6,7 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
     authUser: null, // Användardata
     isRegistering: false, // Status för registrering
     isLoggarIn: false, // Det här ska användas i login – korrekt namn
-    isUpdatingProfile: false, // Kan användas i profilsidan senare
+    isUpdatingProBild: false, // Kan användas i profilsidan senare
 
     isCheckingAuth: true, // När appen startar, kontrollerar om användaren redan är inloggad
 
@@ -56,7 +56,6 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
         }
     },
     
-
     logout: async () => {
         try {
             await axiosInstance.post("/auth/logout");
@@ -65,5 +64,21 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
         } catch (error) {
             toast.error(error.response?.data?.message || "Kunde inte logga ut.");
         }
-    }
+    },
+
+    updateProBild: async (data) => {
+        set({ isUpdatingProBild: true });  // Indikerar att en uppdatering pågår
+    
+        try {
+            const res = await axiosInstance.put("/auth/updateraBild", data);  // Skickar PUT-förfrågan till backend
+            set({ authUser: res.data });  // Uppdaterar användarens data med ny profilbild
+            toast.success("Profilbilden uppdaterades");  // Visar framgångsmeddelande
+        } catch (error) {
+            console.log("Error i updatera profil:", error);  // Loggar eventuellt fel
+            toast.error(error.response.data.message);  // Visar felmeddelande från servern
+        } finally {
+            set({ isUpdatingProBild: false });  // Återställer statusen när uppdateringen är klar
+        }
+    },
+        
 }));

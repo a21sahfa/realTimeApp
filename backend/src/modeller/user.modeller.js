@@ -18,8 +18,13 @@ const userInfo = new mongoose.Schema(
         required: true,
         minlength: 6,
     },
+
+    profilBild: {
+        type: String,
+        default: "",
+      },
 },
-{ Timestamp: true }
+{ timestamps: true }
 );
 
 const User = mongoose.model("User", userInfo);

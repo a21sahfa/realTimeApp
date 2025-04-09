@@ -36,6 +36,8 @@ export const register = async (req, res) => {
                 _id:nyUser._id,
                 namn:nyUser.namn,
                 email:nyUser.email,
+                profilBild: newUser.profilBild,
+
             });
         }else {
             res.status(400).json({ message: "invalid användare"});
@@ -66,7 +68,9 @@ export const login = async (req, res) => {
         res.status(200).json({
             _id:user._id,
             namn:user.namn,
-            email:user.email,            
+            email:user.email,   
+            profilBild: user.profilBild,
+         
         })
         
     } catch (error) {
@@ -98,13 +102,13 @@ export const updateraBild = async(req, res) => {
         }
 
         const uploadResponse = await cloudinary.uploader.upload(profilBild);
-        const updateradUser = await User.findByIDAndUpdate(userId, {profilBild:uploadResponse.secure_url}, {new:true});
+        const updateradUser = await User.findByIdAndUpdate(userId, {profilBild:uploadResponse.secure_url}, {new:true});
 
-        res.status(500).json(updateradUser);
+        res.status(200).json(updateradUser);
 
 
     } catch (error) {
-        console.log("error in update profile:", error);
+        console.log("error i update profile:", error);
         res.status(500).json({message: "internal server error"});
     }
 };
