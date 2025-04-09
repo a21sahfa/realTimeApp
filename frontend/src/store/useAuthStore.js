@@ -2,46 +2,68 @@ import { create } from "zustand";
 import { axiosInstance } from "../Lib/axios.js";
 import toast from "react-hot-toast";
 
+export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom det används i login-funktionen
+    authUser: null, // Användardata
+    isRegistering: false, // Status för registrering
+    isLoggarIn: false, // Det här ska användas i login – korrekt namn
+    isUpdatingProfile: false, // Kan användas i profilsidan senare
 
+    isCheckingAuth: true, // När appen startar, kontrollerar om användaren redan är inloggad
 
-export const useAuthStore = create((set) => ({
-    authUser:null, 
-    isRegistering: false,
-    isLoggingIn: false,
-    isUpdatingProfile: false,
-    
-    isCheckingAuth:true,
-
-    checkAuth : async ()=> {
+    checkAuth: async () => {
         try {
-            const res = await axiosInstance.get("/auth/check");
-            set ({authUser:res.data})
-             
+            const res = await axiosInstance.get("/auth/check"); // Kontrollera om användaren är autentiserad
+            set({ authUser: res.data }); // Om ja, spara användaren i Zustand
         } catch (error) {
-            console.log("error in checkAuth:", error);
-            set({authUser:null});
-        }finally{
-            set({isCheckingAuth: false});
+            console.log("error i checkAuth:", error); // Om inte, logga ut
+            set({ authUser: null });
+        } finally {
+            set({ isCheckingAuth: false }); // Klart med kontrollen
         }
     },
 
     register: async (data) => {
-        set ({ isRegistering: true });
+        set({ isRegistering: true });
 
         try {
             const res = await axiosInstance.post("/auth/register", data);
             toast.success("kontot har skapats");
-            set({ authUser: res.data });
-      
-            set({authUser: res.data});
+            set({ authUser: res.data }); // Logga in användaren direkt efter registrering
         } catch (error) {
-            console.error("❌ Register error:", error); // ✅ This will show us the real error
             toast.error(error?.response?.data?.message || "Något gick fel. Försök igen.");
-              
-        } finally{
+        } finally {
             set({ isRegistering: false });
-
         }
-
     },
-})); 
+
+    login: async (data) => {
+        set({ isLoggarIn: true });
+        try {
+            const res = await axiosInstance.post("/auth/login", data);
+            set({ authUser: res.data });
+            toast.success("Loggedes in");
+    
+            // kontrollera att connectSocket finns innan du anropar
+            const connectSocket = get().connectSocket;
+            if (typeof connectSocket === "function") {
+                connectSocket();
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            toast.error(error.response?.data?.message || "Kunde inte logga in.");
+        } finally {
+            set({ isLoggarIn: false });
+        }
+    },
+    
+
+    logout: async () => {
+        try {
+            await axiosInstance.post("/auth/logout");
+            set({ authUser: null }); // Töm användaren
+            toast.success("loggades ut");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Kunde inte logga ut.");
+        }
+    }
+}));

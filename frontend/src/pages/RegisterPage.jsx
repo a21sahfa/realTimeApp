@@ -5,15 +5,16 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Visar/döljer lösenord
   const [formData, setFormData] = useState({
     namn: "",
     email: "",
     password: "",
   });
 
-  const { register, isRegistering } = useAuthStore();
+  const { register, isRegistering } = useAuthStore(); // Hämtar register-funktionen från Zustand
 
+  // Enkel validering innan formuläret skickas
   const validateForm = () => {
     if (!formData.namn.trim()) return toast.error("Full name is required");
     if (!formData.email.trim()) return toast.error("Email is required");
@@ -25,32 +26,33 @@ const RegisterPage = () => {
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Förhindrar reload
+    const success = validateForm(); // Kör validering
 
-    const success = validateForm();
-
-    if (success === true) register(formData);
+    if (success === true) register(formData); // Om allt OK, skicka data
   };
 
-  return <div className="min-h-screen grid lg: grid-cols-2">
-    <div className="flex flex-col justify-center items-center p-6 sm:p-12">
-      <div className="w-full max-w-md space-y-8">
-{/*lgo*/}
-        <div className="text-center mb-8">
-          <div className="flex flex-col items-center gap-2 group">
-            <div 
-            className="size-12 rounded-x1 bg-primary/10 flex items-center justify-center
-             group-hover:bg-primary/20 transition-colors">
-              <MessageSquare className="size-6 text-primary" />
+  return (
+    <div className="min-h-screen grid lg:grid-cols-2"> {/* Responsiv layout med grid */}
+      <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+        <div className="w-full max-w-md space-y-8">
+
+          {/* Logotyp + text */}
+          <div className="text-center mb-8">
+            <div className="flex flex-col items-center gap-2 group">
+              <div className="size-12 rounded-x1 bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <MessageSquare className="size-6 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold mt-2">skapa konto</h1>
+              <p className="text-base-content/60">starta ditt konto</p>
             </div>
-            <h1 className="text-2xl font-bold mt-2">skapa konto</h1>
-            <p className="text-base-content/60"> starta ditt konto</p>
-
           </div>
-        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="form-control">
+          {/* Formulär */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* Namn */}
+            <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Full Name</span>
               </label>
@@ -60,7 +62,7 @@ const RegisterPage = () => {
                 </div>
                 <input
                   type="text"
-                  className={`input input-bordered w-full pl-10`}
+                  className="input input-bordered w-full pl-10"
                   placeholder="sahib da"
                   value={formData.namn}
                   onChange={(e) => setFormData({ ...formData, namn: e.target.value })}
@@ -68,6 +70,7 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Email</span>
@@ -78,7 +81,7 @@ const RegisterPage = () => {
                 </div>
                 <input
                   type="email"
-                  className={`input input-bordered w-full pl-10`}
+                  className="input input-bordered w-full pl-10"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -86,6 +89,7 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* Lösenord */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Password</span>
@@ -96,11 +100,12 @@ const RegisterPage = () => {
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`input input-bordered w-full pl-10`}
+                  className="input input-bordered w-full pl-10"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
+                {/* Visa/Dölj lösenord */}
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
@@ -115,6 +120,7 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* Submit-knapp */}
             <button type="submit" className="btn btn-primary w-full" disabled={isRegistering}>
               {isRegistering ? (
                 <>
@@ -125,9 +131,10 @@ const RegisterPage = () => {
                 "Create Account"
               )}
             </button>
-        </form>
+          </form>
 
-        <div className="text-center">
+          {/* Länk till inloggning */}
+          <div className="text-center">
             <p className="text-base-content/60">
               Already have an account?{" "}
               <Link to="/login" className="link link-primary">
@@ -135,11 +142,11 @@ const RegisterPage = () => {
               </Link>
             </p>
           </div>
+
+        </div>
       </div>
     </div>
-  </div>;
-
-
+  );
 };
 
 export default RegisterPage;
