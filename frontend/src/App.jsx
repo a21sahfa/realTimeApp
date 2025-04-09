@@ -11,7 +11,7 @@ import LoginPage from './pages/LoginPage.jsx';       // Inloggningssida
 import ProfilePage from './pages/ProfilePage.jsx';   // Profil-sida
 import SettingsPage from './pages/SettingsPage.jsx'; // Inställningar
 
-import { axiosInstance } from './Lib/axios.js'; // Axios-instans (om du behöver göra requests)
+import { axiosInstance } from './lib/axios.js'; // Axios-instans (om du behöver göra requests)
 import { useAuthStore } from './store/useAuthStore.js'; // Zustand store för auth-state
 
 import { Loader } from "lucide-react"; // Laddningsikon
@@ -35,7 +35,7 @@ const App = () => { // Huvudkomponenten för appen
   );
 
   return (
-    <div>
+    <div >
       <Navbar /> {/* Visa navbar oavsett vilken sida man är på */}
       
       <Routes>

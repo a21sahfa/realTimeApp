@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { axiosInstance } from "../Lib/axios.js";
+import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
 export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom det används i login-funktionen
@@ -7,8 +7,8 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
     isRegistering: false, // Status för registrering
     isLoggarIn: false, // Det här ska användas i login – korrekt namn
     isUpdatingProBild: false, // Kan användas i profilsidan senare
-
     isCheckingAuth: true, // När appen startar, kontrollerar om användaren redan är inloggad
+    onlineUsers: [],
 
     checkAuth: async () => {
         try {
