@@ -6,26 +6,26 @@ export const skyddRoute = async (req,res,next) => {
         const token2 = req.cookies.token;
 
         if(!token2){
-            return res.status(401).json({ message: "unauthorized - no token provided"});
+            return res.status(401).json({ message: "Obehörig - ingen token angiven"});
         }
 
         const decoded = jwt.verify(token2, process.env.JWT_HEMLIG);
 
         if (!decoded){
-            return res.status(401).json({ message: "unauthorized - token invalid"});
+            return res.status(401).json({ message: "Obehörig – ogiltig token"});
         }
 
         const user = await User.findById(decoded.userId).select("-password");
 
         if(!user){
-            return res.status(404).json({ message: "user not found"});
+            return res.status(404).json({ message: "användare hittades inte"});
         }
 
         req.user = user;
 
         next();
     } catch (error) {
-        console.log("Error in skyddRoute middleware: ", error.message);
+        console.log("Error i skyddRoute middleware: ", error.message);
         return res.status(500).json({ message: "internal server error"});
 
     }

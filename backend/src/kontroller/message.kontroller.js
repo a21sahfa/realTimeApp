@@ -11,7 +11,7 @@ export const getUsers = async (req, res) => {
 
         res.status(200).json(filteredUsers);
     } catch (error) {
-        console.error("error in getUsers: ", error.message);
+        console.error("error i getUsers: ", error.message);
         res.status(500).json({error: "internal server error"});
     }
 };
@@ -30,7 +30,7 @@ try {
     res.status(200).json(messages);
 
 } catch (error) {
-    console.error("error in messageskontroller: ", error.message);
+    console.error("error i messageskontroller: ", error.message);
     res.status(500).json({error: "internal server error"});
 
 }
@@ -65,7 +65,7 @@ export const sendeMessage = async (req, res) => {
         res.status(201).json(newMessage);
 
     } catch (error) {
-        console.error("error in sendMessagekontroller: ", error.message);
+        console.error("error i sendMessagekontroller: ", error.message);
         res.status(500).json({ error: "internal server error" });
     }
 };

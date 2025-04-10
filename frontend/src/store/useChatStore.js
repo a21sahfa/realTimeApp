@@ -33,6 +33,16 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
-
+  sendMessage: async (messageData) => {
+    const { selectedUser, messages } = get();
+    try {
+      const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, messageData); // Skickar meddelande till den valda användaren
+      set({ messages: [...messages, res.data] }); // Lägger till det nya meddelandet i messages arrayen
+    } catch (error) {
+      toast.error(error.response.data.message); // Hanterar eventuella fel och visar ett toastmeddelande
+    }
+  },
+  
+  setSelectedUser: (selectedUser) => set({ selectedUser }), // Uppdaterar den valda användaren i store
+  
 }));

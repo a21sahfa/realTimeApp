@@ -1,0 +1,28 @@
+const MessageSkelett = () => {
+  const skeletonMessages = Array(6).fill(null);  // Fyller arrayen med null för att skapa 6 placeholders
+
+  return (
+    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {skeletonMessages.map((_, idx) => (  // Itererar genom arrayen och genererar ett skelettmeddelande för varje objekt
+        <div key={idx} className={`chat ${idx % 2 === 0 ? "chat-start" : "chat-end"}`}>
+          {/* Varannan skelettmeddelande placeras till vänster och varannan till höger */}
+          <div className="chat-image avatar">
+            <div className="size-10 rounded-full">
+              <div className="skeleton w-full h-full rounded-full" />  // En rund skelettavatar
+            </div>
+          </div>
+
+          <div className="chat-header mb-1">
+            <div className="skeleton h-4 w-16" />  // En kort rektangulär skelettkomponent som representerar t.ex. tidsstämpeln
+          </div>
+
+          <div className="chat-bubble bg-transparent p-0">
+            <div className="skeleton h-16 w-[200px]" />  // En lång rektangel som representerar själva meddelandet
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default MessageSkelett;
