@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
+
+const LOCAL_URL= "http://localhost:5001";
 
 export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom det används i login-funktionen
     authUser: null, // Användardata
@@ -9,11 +12,15 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
     isUpdatingProBild: false, // Kan användas i profilsidan senare
     isCheckingAuth: true, // När appen startar, kontrollerar om användaren redan är inloggad
     onlineUsers: [],
+    socket: null,
+
+
 
     checkAuth: async () => {
         try {
             const res = await axiosInstance.get("/auth/check"); // Kontrollera om användaren är autentiserad
             set({ authUser: res.data }); // Om ja, spara användaren i Zustand
+            get().anslutSocket();
         } catch (error) {
             console.log("error i checkAuth:", error); // Om inte, logga ut
             set({ authUser: null });
@@ -29,6 +36,7 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
             const res = await axiosInstance.post("/auth/register", data);
             toast.success("kontot har skapats");
             set({ authUser: res.data }); // Logga in användaren direkt efter registrering
+            get().anslutSocket();
         } catch (error) {
             toast.error(error?.response?.data?.message || "Något gick fel. Försök igen.");
         } finally {
@@ -42,12 +50,8 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
             const res = await axiosInstance.post("/auth/login", data);
             set({ authUser: res.data });
             toast.success("Loggedes in");
-    
-            // kontrollera att connectSocket finns innan du anropar
-            const connectSocket = get().connectSocket;
-            if (typeof connectSocket === "function") {
-                connectSocket();
-            }
+
+            get().anslutSocket();
         } catch (error) {
             console.error("Login error:", error);
             toast.error(error.response?.data?.message || "Kunde inte logga in.");
@@ -61,6 +65,7 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
             await axiosInstance.post("/auth/logout");
             set({ authUser: null }); // Töm användaren
             toast.success("loggades ut");
+            get().disconnectSocket();
         } catch (error) {
             toast.error(error.response?.data?.message || "Kunde inte logga ut.");
         }
@@ -80,5 +85,26 @@ export const useAuthStore = create((set, get) => ({  // lade till `get` eftersom
             set({ isUpdatingProBild: false });  // Återställer statusen när uppdateringen är klar
         }
     },
-        
+
+    anslutSocket: () => {
+        const {authUser} = get();
+        if(!authUser || get().socket?.connected) return;
+
+        const socket = io(LOCAL_URL, {
+            query: {
+                userId: authUser._id,
+            },
+        });
+        socket.connect()
+
+        set({socket: socket});
+
+        socket.on("getAktivUsers", (usersIDS) =>{
+            set ({onlineUsers: usersIDS});
+        });
+    },
+
+    disconnectSocket: () => {
+        if(get().socket?.connected) get().socket.disconnect();
+    },
 }));

@@ -1,6 +1,7 @@
 import User from "../modeller/user.modeller.js";
 import Message from "../modeller/message.modeller.js";
 import cloudinary from "../lib/cloudinary.js";
+import { io } from "../lib/socket.js";
 
 
 export const getUsers = async (req, res) => {
@@ -36,6 +37,7 @@ try {
 }
 };
 import mongoose from "mongoose";
+import { getMottagareSockerId } from "../lib/socket.js";
 
 export const sendeMessage = async (req, res) => {
     try {
@@ -63,6 +65,11 @@ export const sendeMessage = async (req, res) => {
 
         await newMessage.save();
         res.status(201).json(newMessage);
+
+        const mottagareSocketId = getMottagareSockerId(recieverId);
+        if (mottagareSocketId){
+            io.to(mottagareSocketId).emit("nyMessage", newMessage);
+        }
 
     } catch (error) {
         console.error("error i sendMessagekontroller: ", error.message);

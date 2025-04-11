@@ -19,8 +19,9 @@ import { Toaster } from 'react-hot-toast'; // Toast-notiser
 
 const App = () => { // Huvudkomponenten för appen
 
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore(); // Tar in auth-relaterade state och funktioner
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore(); // Tar in auth-relaterade state och funktioner
 
+  console.log({onlineUsers});
   useEffect(() => {
     checkAuth(); // Körs när appen laddas för att kolla om användaren är inloggad
   }, [checkAuth]);

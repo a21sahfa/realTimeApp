@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
+import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
@@ -41,6 +42,23 @@ export const useChatStore = create((set, get) => ({
     } catch (error) {
       toast.error(error.response.data.message); // Hanterar eventuella fel och visar ett toastmeddelande
     }
+  },
+
+  subToMes: () => {
+    const { selectedUser } = get();
+    if(!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket;
+    socket.on("nyMessage", (newMessage) => {
+      set({
+        messages: [...get().messages,newMessage],
+      });
+    });
+  },
+
+  unsubFromMes : () => {
+    const socket = useAuthStore.getState().socket
+    socket.off("nyMessage");
   },
   
   setSelectedUser: (selectedUser) => set({ selectedUser }), // Uppdaterar den valda användaren i store
