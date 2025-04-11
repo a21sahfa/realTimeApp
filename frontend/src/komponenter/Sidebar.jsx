@@ -45,8 +45,8 @@ const Sidebar = () => {
           >
             <div className="relative mx-auto lg:mx-0">
               <img
-                src={users.profilBild || "/avatar.png"}
-                alt={users.namn}
+                src={user.profilBild || "/avatar.png"}
+                alt={user.namn}
                 className="size-12 object-cover rounded-full"
               />
               {onlineUsers.includes(user._id) && (
