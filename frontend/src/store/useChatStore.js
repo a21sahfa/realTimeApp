@@ -36,35 +36,39 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-sendMessage: async (messageData) => {
-   const { selectedUser, messages } = get();
-   const timings = get().timings || [];
-    const start = performance.now(); // Start timing
+  sendMessage: async (messageData) => {
+    const { selectedUser } = get();
+    const timings = get().timings || [];
+  
+    const start = performance.now();
+  
     try {
-     const res = await axiosInstance.post(`/message/send/${selectedUser.id}`, messageData);
-      const end = performance.now(); // End timing
-     const duration = end - start;
+      const res = await axiosInstance.post(`/message/send/${selectedUser.id}`, messageData);
+      const end = performance.now();
+      const duration = end - start;
+      timings.push(duration);
+  
       console.log(`⏱️ Message write time: ${duration.toFixed(2)} ms`);
-     timings.push(duration);
-      // Save the data after 10 writes
-     if (timings.length >= 10) {
-       const blob = new Blob([JSON.stringify(timings)], { type: "application/json" });
-       const link = document.createElement("a");
-       link.href = URL.createObjectURL(blob);
-       link.download = "write_timings.json";
-       document.body.appendChild(link);
-       link.click();
-       document.body.removeChild(link);
-     }
-      set({
-       messages: [...messages, res.data],
-       timings, // store timings temporarily in the Zustand store
-     });
-   } catch (error) {
-     console.error("Message send error:", error);
-     toast.error(error.response?.data?.message || "Error sending message");
-   }
- },
+  
+      // DO NOT add message to messages[] yet
+      set({ timings });
+  
+      if (timings.length >= 400) {
+        const blob = new Blob([JSON.stringify(timings)], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "write_timings.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Message send error:", error);
+      toast.error(error.response?.data?.message || "Error sending message");
+    }
+  },
+  
+ 
 
 
   subToMes: () => {
