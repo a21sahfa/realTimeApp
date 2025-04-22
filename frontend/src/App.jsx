@@ -3,61 +3,50 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import Navbar from './komponenter/navbar.jsx'; // Navigationsfältet (syns överallt)
+import Navbar from './komponenter/navbar.jsx';
 
-import HomePage from './pages/HomePage.jsx';         // Startsidan
-import RegisterPage from './pages/RegisterPage.jsx'; // Registreringssida
-import LoginPage from './pages/LoginPage.jsx';       // Inloggningssida
-import ProfilePage from './pages/ProfilePage.jsx';   // Profil-sida
-import SettingsPage from './pages/SettingsPage.jsx'; // Inställningar
+import HomePage from './pages/HomePage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 
-import { axiosInstance } from './lib/axios.js'; // Axios-instans (om du behöver göra requests)
-import { useAuthStore } from './store/useAuthStore.js'; // Zustand store för auth-state
+import { axiosInstance } from './lib/axios.js';
+import { useAuthStore } from './store/useAuthStore.js';
 
-import { Loader } from "lucide-react"; // Laddningsikon
-import { Toaster } from 'react-hot-toast'; // Toast-notiser
+import { Loader } from "lucide-react";
+import { Toaster } from 'react-hot-toast';
 
-const App = () => { // Huvudkomponenten för appen
+const App = () => {
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
 
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore(); // Tar in auth-relaterade state och funktioner
-
-  console.log({onlineUsers});
   useEffect(() => {
-    checkAuth(); // Körs när appen laddas för att kolla om användaren är inloggad
+    checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser }); // För debugging – visar authUser i konsolen
-
-  // Om vi håller på att kolla autentisering och authUser inte finns än → visa laddningsspinner
-  if (isCheckingAuth && !authUser) return (
-    <div className='flex items-center justify-center h-screen'>
-      <Loader className="size={10} animate-spin" />
-    </div>
-  );
+  if (isCheckingAuth && !authUser) {
+    return (
+      <div className='flex items-center justify-center h-screen bg-gray-100'>
+        <Loader className="w-10 h-10 animate-spin text-gray-700" />
+      </div>
+    );
+  }
 
   return (
-    <div >
-      <Navbar /> {/* Visa navbar oavsett vilken sida man är på */}
-      
-      <Routes>
-        {/* Endast tillgänglig om man är inloggad, annars skickas man till /login */}
-        <Route path="/" element={ authUser ? <HomePage /> : <Navigate to="/login" />} />
+    <div className="min-h-screen bg-gray-50 text-gray-800">
+      <Navbar />
 
-        {/* Om användaren INTE är inloggad → visa register. Annars → tillbaka till startsidan */}
-        <Route path="/register" element={ !authUser ? <RegisterPage /> : <Navigate to="/" />} />
+      <main className="max-w-5xl mx-auto px-4 py-6">
+        <Routes>
+          <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+          <Route path="/register" element={!authUser ? <RegisterPage /> : <Navigate to="/" />} />
+          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        </Routes>
+      </main>
 
-        {/* Samma princip som register */}
-        <Route path="/login" element={ !authUser ? <LoginPage /> : <Navigate to="/" />} />
-
-        {/* Settings-sidan visas alltid – du kan lägga till skydd här om du vill */}
-        <Route path="/settings" element={<SettingsPage />} />
-
-        {/* Profil-sidan kräver att användaren är inloggad */}
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-      </Routes>
-
-      {/* Toast-meddelanden (t.ex. "konto skapades") visas med Toaster-komponenten */}
-      <Toaster />
+      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
     </div>
   );
 };

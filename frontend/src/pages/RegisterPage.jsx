@@ -5,16 +5,15 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
-  const [showPassword, setShowPassword] = useState(false); // Visar/döljer lösenord
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     namn: "",
     email: "",
     password: "",
   });
 
-  const { register, isRegistering } = useAuthStore(); // Hämtar register-funktionen från Zustand
+  const { register, isRegistering } = useAuthStore();
 
-  // Enkel validering innan formuläret skickas
   const validateForm = () => {
     if (!formData.namn.trim()) return toast.error("Full name is required");
     if (!formData.email.trim()) return toast.error("Email is required");
@@ -23,47 +22,43 @@ const RegisterPage = () => {
     if (formData.password.length < 6) return toast.error("Password must be at least 6 characters");
 
     return true;
-  }
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Förhindrar reload
-    const success = validateForm(); // Kör validering
-
-    if (success === true) register(formData); // Om allt OK, skicka data
+    e.preventDefault();
+    const success = validateForm();
+    if (success === true) register(formData);
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2"> {/* Responsiv layout med grid */}
+    <div className="min-h-screen grid lg:grid-cols-2 bg-white">
       <div className="flex flex-col justify-center items-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
 
-          {/* Logotyp + text */}
+          {/* Header */}
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
-              <div className="size-12 rounded-x1 bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <MessageSquare className="size-6 text-primary" />
+              <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                <MessageSquare className="w-6 h-6 text-indigo-600" />
               </div>
-              <h1 className="text-2xl font-bold mt-2">skapa konto</h1>
-              <p className="text-base-content/60">starta ditt konto</p>
+              <h1 className="text-2xl font-bold mt-2 text-gray-800">Create Account</h1>
+              <p className="text-sm text-gray-500">Start your journey with us</p>
             </div>
           </div>
 
-          {/* Formulär */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* Namn */}
+            {/* Full Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Full Name</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="size-5 text-base-content/40" />
-                </div>
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
-                  className="input input-bordered w-full pl-10"
-                  placeholder="sahib da"
+                  className="input input-bordered w-full pl-10 bg-white text-gray-900"
+                  placeholder="Your name"
                   value={formData.namn}
                   onChange={(e) => setFormData({ ...formData, namn: e.target.value })}
                 />
@@ -76,12 +71,10 @@ const RegisterPage = () => {
                 <span className="label-text font-medium">Email</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="size-5 text-base-content/40" />
-                </div>
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="email"
-                  className="input input-bordered w-full pl-10"
+                  className="input input-bordered w-full pl-10 bg-white text-gray-900"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -89,43 +82,36 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {/* Lösenord */}
+            {/* Password */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Password</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="size-5 text-base-content/40" />
-                </div>
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="input input-bordered w-full pl-10"
+                  className="input input-bordered w-full pl-10 pr-10 bg-white text-gray-900"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
-                {/* Visa/Dölj lösenord */}
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <EyeOff className="size-5 text-base-content/40" />
-                  ) : (
-                    <Eye className="size-5 text-base-content/40" />
-                  )}
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
 
-            {/* Submit-knapp */}
+            {/* Submit */}
             <button type="submit" className="btn btn-primary w-full" disabled={isRegistering}>
               {isRegistering ? (
                 <>
-                  <Loader2 className="size-5 animate-spin" />
-                  Loading...
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Creating...
                 </>
               ) : (
                 "Create Account"
@@ -133,16 +119,23 @@ const RegisterPage = () => {
             </button>
           </form>
 
-          {/* Länk till inloggning */}
-          <div className="text-center">
-            <p className="text-base-content/60">
+          {/* Link to login */}
+          <div className="text-center pt-4">
+            <p className="text-sm text-gray-500">
               Already have an account?{" "}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className="text-indigo-600 font-medium hover:underline">
                 Sign in
               </Link>
             </p>
           </div>
+        </div>
+      </div>
 
+      {/* Right panel (optional illustration or text) */}
+      <div className="hidden lg:flex items-center justify-center bg-indigo-50">
+        <div className="text-center px-10">
+          <h2 className="text-3xl font-bold text-indigo-600">Join the community</h2>
+          <p className="mt-4 text-gray-500">Collaborate, share, and grow with others just like you.</p>
         </div>
       </div>
     </div>

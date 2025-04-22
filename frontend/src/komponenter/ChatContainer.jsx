@@ -13,11 +13,11 @@ const ChatContainer = () => {
 
   // Hämtar meddelanden för den valda användaren när selectedUser ändras
   useEffect(() => {
-    getMessage(selectedUser._id);
+    getMessage(selectedUser.id);
     subToMes();
 
     return() => unsubFromMes();
-  }, [selectedUser._id, getMessage, subToMes, unsubFromMes]); // Hämtar meddelanden igen när selectedUser._id ändras
+  }, [selectedUser.id, getMessage, subToMes, unsubFromMes]); // Hämtar meddelanden igen när selectedUser._id ändras
 
   // Om meddelandena laddas visas en skelett-animation
   if (isMessagesLoading) {
@@ -36,14 +36,14 @@ const ChatContainer = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
-            key={message._id}
-            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}  // Skillnad på chatbubblor baserat på vem som skickar
+            key={message.id}
+            className={`chat ${String(message.senderId) === String(authUser.id) ? "chat-end" : "chat-start"}`} // Skillnad på chatbubblor baserat på vem som skickar
           >
             <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
                   src={
-                    message.senderId === authUser._id
+                    message.senderId === authUser.id
                       ? authUser.profilBild || "avatar.png" 
                       : selectedUser.profilBild || "avatar.png" 
                       

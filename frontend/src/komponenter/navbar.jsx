@@ -7,27 +7,27 @@ const Navbar = () => {
   const { logout, authUser } = useAuthStore();
 
   return (
-    <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg bg-base-100/80">
+    <header className="bg-gradient-to-br from-slate-900 via-gray-900 to-gray-800 fixed w-full top-0 z-40 backdrop-blur-lg text-white">
       <div className="container mx-auto px-4 h-16">
-        <div className="flex items-center justify-between h-full">
+        <div className="flex items-center justify-center h-full">
           
-          {/* Left side: Logo */}
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
-              <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-primary" />
+          {/* Centered: Logo */}
+          <div className="flex items-center gap-2.5 hover:opacity-80 transition-all">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="size-9 rounded-lg bg-indigo-600/10 flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-indigo-400" />
               </div>
-              <h1 className="text-lg font-bold">TTYL</h1>
+              <h1 className="text-lg font-bold text-white">TTYL</h1>
             </Link>
           </div>
 
           {/* Right side: Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-8">
             
             {/* Settings always visible */}
             <Link
               to="/settings"
-              className="btn btn-sm gap-2 transition-colors"
+              className="btn btn-sm gap-2 transition-colors text-indigo-300 hover:bg-indigo-500/30"
             >
               <Settings className="w-4 h-4" />
               <span className="hidden sm:inline">Settings</span>
@@ -36,13 +36,13 @@ const Navbar = () => {
             {/* Only visible if logged in */}
             {authUser && (
               <>
-                <Link to="/profile" className="btn btn-sm gap-2">
+                <Link to="/profile" className="btn btn-sm gap-2 text-indigo-300 hover:bg-indigo-500/30">
                   <User className="size-5" />
                   <span className="hidden sm:inline">Profile</span>
                 </Link>
 
                 <button
-                  className="btn btn-sm gap-2"
+                  className="btn btn-sm gap-2 text-red-500 hover:bg-red-500/30"
                   onClick={logout}
                 >
                   <LogOut className="size-5" />
